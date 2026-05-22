@@ -1,49 +1,158 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./src/style.css">
-    <title>Document</title>
-</head>
-<body class="relative flex min-h-screen flex-col items-center gap-4 pt-4 text-white
-    before:absolute
-    before:inset-0
-    before:-z-10
-    before:bg-hero
-    before:bg-cover
-    before:bg-center
-    before:bg-fixed
-    before:opacity-95">
-    <h1 class="text-4xl mb-10 underline font-bold">Weather App</h1>
-    <form id="search-form" class="flex flex-col items-center gap-4 lg:flex-row lg:gap-20">
-        <div class="flex gap-4">
-            <input type="text" id="city-input" placeholder="Enter city name" class="border-2 border-black p-4 rounded-full bg-white/80 text-black min-w-30 lg:min-w-100" required>
-            <button type="submit" class="bg-blue-500 text-white py-3 px-10 rounded-full cursor-pointer hover:bg-blue-400">Search</button>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./src/style.css" />
+        <title>Document</title>
+    </head>
+
+    <body
+        class="weather-page relative flex min-h-screen flex-col items-center gap-6 px-4 py-6 text-white bg-hero bg-cover bg-center bg-fixed"
+    >
+        <header class="weather-hero w-full max-w-5xl text-center">
+            <p class="eyebrow">Live forecast</p>
+            <h1 class="text-5xl font-black tracking-tight sm:text-6xl">
+                Weather App
+            </h1>
+            <p class="mt-3 text-sm text-white/80 sm:text-base">
+                Search a city, check the next week, and open today’s card for
+                deeper weather details.
+            </p>
+        </header>
+        <form
+            id="search-form"
+            class="search-panel w-full max-w-5xl flex flex-col gap-4 rounded-3xl p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between"
+        >
+            <div class="flex flex-1 flex-col gap-3 sm:flex-row">
+                <input
+                    type="text"
+                    id="city-input"
+                    placeholder="Enter city name"
+                    class="weather-input min-w-0 flex-1 rounded-full px-5 py-4 text-base text-slate-900 placeholder:text-slate-500"
+                    required
+                />
+                <button
+                    type="submit"
+                    class="cursor-pointer search-button rounded-full px-7 py-4 font-semibold text-white"
+                >
+                    Search
+                </button>
+            </div>
+            <div
+                class="unit-toggle flex items-center justify-center gap-3 rounded-full px-4 py-3 text-sm font-medium text-white/90"
+            >
+                <input
+                    type="radio"
+                    name="unit"
+                    id="metric"
+                    value="metric"
+                    checked
+                    class="cursor-pointer"
+                />
+                <label for="metric">Celsius</label>
+                <input
+                    type="radio"
+                    name="unit"
+                    id="imperial"
+                    value="imperial"
+                    class="cursor-pointer"
+                />
+                <label for="imperial">Fahrenheit</label>
+            </div>
+        </form>
+        <div id="container" class="mt-10 w-full max-w-5xl px-4">
+            <div
+                id="weather-info"
+                class="is-hidden relative w-full bg-gradient-to-br from-sky-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg cursor-pointer flex flex-col lg:flex-row items-center gap-6"
+                role="button"
+                aria-expanded="false"
+            >
+                <div class="flex-1 flex items-center gap-6">
+                    <div id="weather-icon" class="text-6xl">🌤️</div>
+                    <div>
+                        <h2 id="city-name" class="text-2xl font-bold"></h2>
+                        <h3
+                            id="weather-condition"
+                            class="text-sm opacity-90"
+                        ></h3>
+                        <p
+                            id="description"
+                            class="text-base capitalize opacity-90"
+                        ></p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end gap-2">
+                    <div id="temperature" class="text-5xl font-extrabold"></div>
+                    <div id="feels-like" class="text-sm opacity-90"></div>
+                    <div class="flex gap-3 mt-2 text-sm opacity-90">
+                        <div id="humidity"></div>
+                        <div id="wind-speed"></div>
+                    </div>
+                </div>
+                <div class="absolute bottom-2 right-3 text-xs opacity-80">
+                    Click for details
+                </div>
+            </div>
+            <p
+                id="error-message"
+                class="text-red-500 text-4xl font-bold hidden"
+            ></p>
+            <div
+                id="weekly-forecast"
+                class="is-hidden mt-12 mb-12 grid grid-cols-1 gap-4 justify-items-stretch sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+            ></div>
+
+            <dialog id="details-dialog" class="p-0 rounded-xl overflow-hidden">
+                <div class="bg-white text-black p-6 w-full max-w-4xl">
+                    <header class="flex items-start justify-between">
+                        <div>
+                            <h2
+                                id="details-city"
+                                class="text-xl font-bold"
+                            ></h2>
+                            <div
+                                id="details-date"
+                                class="text-sm text-gray-600"
+                            ></div>
+                        </div>
+                        <button
+                            id="details-close"
+                            aria-label="Close dialog"
+                            class="mac-close-button cursor-pointer"
+                            type="button"
+                        >
+                            <span></span>
+                        </button>
+                    </header>
+                    <section class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <div
+                                id="details-main-temp"
+                                class="text-2xl font-semibold"
+                            ></div>
+                            <div
+                                id="details-hours"
+                                class="mt-3 flex gap-2 overflow-x-auto pb-2"
+                            ></div>
+                        </div>
+                        <div id="details-stats" class="space-y-2"></div>
+                    </section>
+                </div>
+            </dialog>
         </div>
-        <div class="flex justify-center gap-4">
-            <input type="radio" name="unit" id="metric" value="metric" checked>
-            <label for="metric">Celsius</label>
-            <input type="radio" name="unit" id="imperial" value="imperial">
-            <label for="imperial">Fahrenheit</label>
-        </div>
-    </form>
-    <div id="container" class="mt-30">
-        <div id="weather-info" class="hidden flex-col items-center gap-4 border-2 border-black p-4 justify-center bg-white/90 text-black">
-            <h3 id="weather-condition" class="text-lg"></h3>
-            <h2 id="city-name" class="text-2xl font-bold"></h2>
-            <p id="temperature" class="text-xl"></p>
-            <p id="description" class="text-lg capitalize"></p>
-            <p id="humidity" class="text-lg"></p>
-            <p id="wind-speed" class="text-lg"></p>
-            <p id="feels-like" class="text-lg"></p>
-        </div>
-        <p id="error-message" class="text-red-500 text-4xl font-bold hidden"></p>
-    </div>
-    <dialog id="loading-dialog" class="p-4 relative backdrop:opacity-100 bg-transparent outline-none w-dvw h-dvh z-100">
-        <div class="absolute inset-0 m-auto h-12 w-12 bg-white p-2 flex items-center justify-center rounded-2xl outline-none">
-            <div class="rounded-full border-4 border-gray-300 border-t-black h-8 w-8 opacity-100 animate-spin outline-none"></div>
-        </div>
-    <script type="module" src="./src/main.js"></script>
-</body>
+        <dialog
+            id="loading-dialog"
+            class="p-4 relative backdrop:opacity-100 bg-transparent outline-none w-dvw h-dvh z-100"
+        >
+            <div
+                class="absolute inset-0 m-auto h-12 w-12 bg-white p-2 flex items-center justify-center rounded-2xl outline-none"
+            >
+                <div
+                    class="rounded-full border-4 border-gray-300 border-t-black h-8 w-8 opacity-100 animate-spin outline-none"
+                ></div>
+            </div>
+        </dialog>
+        <script type="module" src="./src/main.js"></script>
+    </body>
 </html>
